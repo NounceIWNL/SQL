@@ -79,4 +79,15 @@ VALUES(100,'-',20000,datetime('now'));
 
 SELECT * FROM account_changes;
 
-ROLLBACK; 
+ROLLBACK;
+
+
+Снять сумму, превышающую сумму на счету
+BEGIN TRANSACTION;
+UPDATE accounts
+   SET balance = balance - 20000
+ WHERE account_no = 100;
+INSERT INTO account_changes(account_no,flag,amount,changed_at)
+VALUES(100,'-',20000,datetime('now'));
+
+SELECT * FROM account_changes;
