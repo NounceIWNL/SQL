@@ -139,3 +139,100 @@ insert into student (surname, name, univ_id) values ('колдаева', 'еле
 insert into student (surname, name, univ_id) values ('антипов', 'андрей', 4);
 insert into student (surname, name, univ_id) values ('грачев', 'евгений', 4);
 insert into student (surname, name, univ_id) values ('попова', 'дарья', 4);
+
+
+
+
+
+
+------30.05.2024--------
+
+----Напишите запрос для получения алфавитного списка продуктов, не снятых с производства
+----(discontinued = false) (id и названий).
+
+SELECT product_id,product_name
+ FROM products
+ WHERE discontinued = 0
+ ORDER BY product_name;
+
+----Написать запрос для получения общего количества продуктов,
+----количества продуктов, не снятых и снятых с производства
+
+select count (*)
+from products
+union
+select count (*)
+from products
+where discontinued = 1 or discontinued=0;
+
+
+----Написать запрос для получения самого дорогого и самого дешевого продукта
+----(названия и цену за упаковку).
+
+
+select product_name, unit_price from products
+where unit_price=MAX(unit_price);
+union
+select MIN(unit_price, product_name)  from products;
+
+
+---Написать запрос для получения списка продуктов, не снятых с производства,
+---для которых стоимость находится в пределах между $15 и $25.
+
+
+select product_name, unit_price
+from products
+where discontinued=0 and unit_price between 15.00 and 25.00;
+
+
+---Написать запрос, в котором вывести список продуктов,
+---их категорию и поставщиков (название компании, контактное лицо).
+
+
+select product_name, category_name, company_name, contact_name
+from products inner join suppliers on products.supplier_id=suppliers.supplier_id
+inner join categories on categories.category_id=products.category_id;
+
+-----Вывести категории продуктов, поставщиков для каждой категории
+-----и количество поставляемых товаров (если это количество больше 1)
+
+SELECT categories.category_name, suppliers.company_name,SUM(units_in_stock)
+FROM products
+JOIN categories ON
+categories.category_id=products.category_id
+JOIN suppliers ON
+suppliers.supplier_id=products.supplier_id
+GROUP BY categories.category_name,suppliers.company_name
+HAVING SUM(units_in_stock)>1
+ORDER BY category_name;
+
+---Создать триггер, который добавляет в новую таблицу территории
+---при добавлении ее в основную таблицу
+
+CREATE TABLE new_territories (
+    territory_id character varying(20) NOT NULL PRIMARY KEY,
+    territory_description bpchar NOT NULL,
+    region_id smallint NOT NULL,
+	FOREIGN KEY (region_id) REFERENCES region
+);
+
+create trigger new_terr
+after insert on territories
+begin
+    insert into new_territories(territory_description, region_id)
+    values (new.territory_description, new.region_id);
+end;
+
+
+select * from territories;
+
+
+
+---exists----
+
+SELECT company_name
+FROM suppliers
+WHERE EXISTS (SELECT product_name FROM products WHERE products.company_name = suppliers.company_name AND price_name < 20);
+
+
+
