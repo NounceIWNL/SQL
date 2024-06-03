@@ -1,0 +1,69 @@
+--Вывести покупателей, не указавших свою компанию
+--Вывести название самой короткой и самой длинной фонограммы
+--Вывести названия альбомов, имя композитора которых включает 'Smith'
+--Вывести названия альбомов, в которые входит слово 'Princess'
+--Вывести название альбома с самым длинным списком композиторов
+--Вывести все счета об оплате за январь 2010 г.
+--Для исполнителя 'Queen' вывести название трека и альбома
+--Вывести название трека, которое включает слово 'Man'
+--Вывести 10 треков, название которых заканчивается цифрами
+--Вывести альбомы и их исполнителей.
+--Вывести исполнителей безымянных альбомов
+--Вывести треки, названия альбомов группы 'AC/DC'
+--Вывести список исполнителей, не имеющих альбомов
+--Вывести список служащих, живущих в одинаковых городах (земляков). Использовать self join.
+--Вывести названия альбомов и количество треков
+--Для каждого альбома вывести минимальную, максимальную и среднюю продолжительность треков
+--Количество треков по типу медиа и по жанрам
+--Вывести альбомы продолжительностью более 2 часов
+
+
+
+
+---Вывести покупателей, не указавших свою компанию---
+
+select * from customers
+where company is null;
+
+---Вывести название самой короткой и самой длинной фонограммы---
+
+select TrackId, Name, MAX(Milliseconds) from tracks;
+union
+select TrackId, Name, MIN(Milliseconds) from tracks;
+
+---Вывести названия альбомов, имя композитора которых включает 'Smith'---
+
+select albums.Title, artists.name from albums
+join artists on albums.artistid=artists.artistid
+where artists.Name like '%Smith%';
+
+---Вывести названия альбомов, в которые входит слово 'Princess'---
+
+select albums.Title from albums
+where albums.Title like '%Princess%';
+
+---Вывести название альбома с самым длинным списком композиторов---
+
+select tracks.name from tracks
+where length(tracks.composer)=(select MAX(length(tracks.composer)) from tracks);
+
+---Вывести альбомы и их исполнителей.---
+
+select albums.Title, artists.name  from albums
+join artists on albums.artistid=artists.artistid;
+
+---Вывести название трека, которое включает слово 'Man'---
+
+select tracks.name from tracks
+where tracks.name like '%Man%';
+
+---Для исполнителя 'Queen' вывести название трека и альбома---
+
+select tracks.name, albums.title  from tracks
+join albums on tracks.albumid=albums.albumid
+join artists on albumls.artistid=artists.artistid
+where artists.name='Queen';
+
+---Вывести треки, названия альбомов группы 'AC/DC'---
+
+
